@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <section class="card mx-auto max-w-2xl">
+    <h1 class="mb-3 text-xl font-bold">{% if object %}Editar movimiento{% else %}Nuevo movimiento{% endif %}</h1>
+    {% if object.grupo_id %}<p class="mb-3 text-sm text-gray-600">Cuota {{ object.cuota }} de {{ object.cuotas }}: se edita solo esta cuota.</p>{% endif %}
+    {% if object %}
+      {% url 'finanzas:movimiento_editar' object.pk as accion %}
+      {% include "parciales/movimiento_form.html" with accion=accion siguiente=request.GET.next boton="Guardar cambios" %}
+    {% else %}
+      {% url 'finanzas:movimiento_nuevo' as accion %}
+      {% include "parciales/movimiento_form.html" with accion=accion siguiente=request.GET.next %}
+    {% endif %}
+  </section>
+{% endblock %}

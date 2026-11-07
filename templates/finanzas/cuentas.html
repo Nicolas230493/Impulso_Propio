@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load formato %}
+{% block contenido %}
+  <h1 class="mb-4 text-2xl font-bold">Cuentas</h1>
+  <div class="card mb-6 overflow-x-auto">
+    <table class="tabla">
+      <thead><tr><th>Nombre</th><th>Tipo</th><th>Moneda</th><th class="text-right">Saldo inicial</th><th class="text-right">Saldo a hoy</th><th></th></tr></thead>
+      <tbody>
+        {% for c, saldo in cuentas %}
+          <tr>
+            <td>{{ c.nombre }}</td>
+            <td>{{ c.get_tipo_display }}</td>
+            <td>{{ c.moneda }}</td>
+            <td class="text-right">{{ c.saldo_inicial|dinero:c.moneda }}</td>
+            <td class="text-right font-bold {% if saldo < 0 %}text-red-600{% endif %}">{{ saldo|dinero:c.moneda }}</td>
+            <td class="whitespace-nowrap text-right">
+              <a href="{% url 'finanzas:cuenta_editar' c.pk %}" class="link mr-2">Editar</a>
+              <a href="{% url 'finanzas:cuenta_borrar' c.pk %}" class="link-peligro">Eliminar</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-center text-gray-500">No tenés cuentas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="mt-2 text-xs text-gray-500">El saldo a hoy no incluye cuotas ni movimientos con fecha futura.</p>
+  </div>
+
+  <section class="card">
+    <h2 class="mb-3 text-lg font-bold">Agregar cuenta</h2>
+    <form method="post" action="{% url 'finanzas:cuenta_nueva' %}" class="grid grid-cols-2 gap-2 md:grid-cols-5">
+      {% csrf_token %}
+      {% include "parciales/campo.html" with campo=form.nombre %}
+      {% include "parciales/campo.html" with campo=form.tipo %}
+      {% include "parciales/campo.html" with campo=form.moneda %}
+      {% include "parciales/campo.html" with campo=form.saldo_inicial %}
+      <button class="btn-verde self-end">Agregar cuenta</button>
+    </form>
+  </section>
+{% endblock %}

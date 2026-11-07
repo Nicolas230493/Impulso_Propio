@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load formato %}
+{% block contenido %}
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+    <h1 class="text-2xl font-bold">Historial del mes</h1>
+    <div class="flex flex-wrap gap-2">
+      <a href="{% url 'finanzas:movimiento_nuevo' %}?mes={{ mes }}" class="btn-primario">Nuevo movimiento</a>
+      <a href="{% url 'reportes:exportar_mes' %}?mes={{ mes }}" class="btn-borde">Exportar mes (CSV)</a>
+      <a href="{% url 'reportes:exportar_backup' %}" class="btn-borde">Backup completo (CSV)</a>
+    </div>
+  </div>
+
+  <div class="card overflow-x-auto">
+    <table class="tabla">
+      <thead>
+        <tr><th>Fecha</th><th>Tipo</th><th>Categoría</th><th>Cuenta</th><th>Descripción</th><th>Monto</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        {% for t in movimientos %}
+          <tr id="mov-{{ t.pk|stringformat:'d' }}">
+            <td class="whitespace-nowrap">{{ t.fecha|date:"d/m/Y" }}</td>
+            <td><span class="chip {% if t.es_ingreso %}bg-green-500{% else %}bg-red-500{% endif %}">{{ t.get_tipo_display|upper }}</span></td>
+            <td>{{ t.categoria.nombre }}</td>
+            <td>{{ t.cuenta.nombre }}</td>
+            <td>{{ t.descripcion|default:"-" }}{% if t.recurrente_id %} <span title="Recurrente">🔁</span>{% endif %}</td>
+            <td class="whitespace-nowrap font-bold {% if t.es_ingreso %}text-green-600{% else %}text-red-600{% endif %}">
+              {{ t.monto|dinero:t.moneda }}
+              {% if t.moneda == "USD" %}<div class="text-xs font-normal text-gray-500">{{ t.monto_ars|ars }} · TC {{ t.tipo_cambio|numero:2 }}</div>{% endif %}
+            </td>
+            <td class="whitespace-nowrap">
+              <a href="{% url 'finanzas:movimiento_editar' t.pk %}?next={{ request.get_full_path|urlencode }}" class="link mr-2">Editar</a>
+              {% if t.grupo_id %}
+                <a href="{% url 'finanzas:movimiento_borrar' t.pk %}?next={{ request.get_full_path|urlencode }}" class="link-peligro">Eliminar</a>
+              {% else %}
+                <form method="post" action="{% url 'finanzas:movimiento_borrar' t.pk %}" class="inline"
+                      hx-post="{% url 'finanzas:movimiento_borrar' t.pk %}" hx-target="#mov-{{ t.pk|stringformat:'d' }}" hx-swap="outerHTML"
+                      hx-confirm="¿Eliminar este movimiento?">
+                  {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button class="link-peligro">Eliminar</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center text-gray-500">No hay movimientos en este mes.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

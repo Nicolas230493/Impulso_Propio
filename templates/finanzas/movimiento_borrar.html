@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load formato %}
+{% block contenido %}
+  <section class="card mx-auto max-w-lg">
+    <h1 class="mb-3 text-xl font-bold">Eliminar movimiento</h1>
+    <p class="mb-4">{{ object.fecha|date:"d/m/Y" }} · {{ object.categoria.nombre }} · {{ object.descripcion|default:"" }} · <b>{{ object.monto|dinero:object.moneda }}</b></p>
+    <form method="post" class="space-y-3">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.GET.next }}">
+      {% if object.grupo_id %}
+        <p class="text-sm">Este gasto es la cuota {{ object.cuota }} de {{ object.cuotas }}. ¿Qué querés eliminar?</p>
+        <label class="flex items-center gap-2"><input type="radio" name="todo_el_grupo" value="1" checked> Todas las cuotas</label>
+        <label class="flex items-center gap-2"><input type="radio" name="todo_el_grupo" value="0"> Solo esta cuota</label>
+      {% endif %}
+      <div class="flex gap-2">
+        <button class="btn-peligro">Eliminar</button>
+        <a href="{{ request.GET.next|default:'/movimientos/' }}" class="btn-borde">Cancelar</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

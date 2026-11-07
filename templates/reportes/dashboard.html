@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load formato %}
+{% block contenido %}
+  {% include "parciales/alertas.html" %}
+
+  <div class="mb-6 grid grid-cols-1 gap-4 rounded bg-white p-4 shadow-sm md:grid-cols-3">
+    <div><p class="text-xs text-gray-500">Ingresos del mes</p><span class="font-bold text-green-600">{{ resumen.ingresos|ars }}</span></div>
+    <div><p class="text-xs text-gray-500">Gastos del mes</p><span class="font-bold text-red-600">{{ resumen.gastos|ars }}</span></div>
+    <div><p class="text-xs text-gray-500">Saldo del mes</p><span class="font-bold">{{ resumen.saldo|ars }}</span></div>
+  </div>
+
+  <section class="card mb-6">
+    <h2 class="mb-3 text-xl font-bold">Nuevo movimiento</h2>
+    {% url 'finanzas:movimiento_nuevo' as accion %}
+    {% include "parciales/movimiento_form.html" with accion=accion siguiente=request.get_full_path %}
+  </section>
+
+  {% include "parciales/graficos.html" %}
+{% endblock %}

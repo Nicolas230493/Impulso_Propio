@@ -1,0 +1,56 @@
+{% load static formato %}<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Gastos con Propósito{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script src="{% static 'js/app.js' %}" defer></script>
+  <script src="{% static 'vendor/htmx-2.0.4.min.js' %}" defer></script>
+  <script src="{% static 'vendor/alpinejs-3.14.8.min.js' %}" defer></script>
+  {% block head %}{% endblock %}
+</head>
+<body class="min-h-screen bg-gray-100 text-gray-900" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  {% if user.is_authenticated %}
+    {% url 'reportes:dashboard' as u_inicio %}{% url 'finanzas:movimientos' as u_mov %}{% url 'finanzas:cuentas' as u_cuentas %}
+    {% url 'finanzas:categorias' as u_cat %}{% url 'finanzas:recurrentes' as u_rec %}{% url 'metas:lista' as u_metas %}{% url 'reportes:reportes' as u_rep %}
+    <header class="border-b bg-white">
+      <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-3">
+        <a href="{% con_mes u_inicio %}" class="text-lg font-bold">Gastos con Propósito</a>
+        <div class="flex items-center gap-3">
+          <form method="get" class="text-sm">
+            <label class="flex items-center gap-1">Mes
+              <input type="month" name="mes" value="{{ mes }}" class="rounded border p-1" onchange="this.form.submit()">
+            </label>
+          </form>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="text-sm text-red-600 hover:underline" title="{{ user.email }}">Salir</button>
+          </form>
+        </div>
+      </div>
+      <nav class="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-4 pb-2">
+        <a href="{% con_mes u_inicio %}" class="nav-link {% if request.path == u_inicio %}nav-link-activo{% endif %}">Inicio</a>
+        <a href="{% con_mes u_mov %}" class="nav-link {% if request.path == u_mov %}nav-link-activo{% endif %}">Movimientos</a>
+        <a href="{% con_mes u_cuentas %}" class="nav-link {% if request.path == u_cuentas %}nav-link-activo{% endif %}">Cuentas</a>
+        <a href="{% con_mes u_cat %}" class="nav-link {% if request.path == u_cat %}nav-link-activo{% endif %}">Categorías</a>
+        <a href="{% con_mes u_rec %}" class="nav-link {% if request.path == u_rec %}nav-link-activo{% endif %}">Recurrentes</a>
+        <a href="{% con_mes u_metas %}" class="nav-link {% if request.path == u_metas %}nav-link-activo{% endif %}">Metas</a>
+        <a href="{% con_mes u_rep %}" class="nav-link {% if request.path == u_rep %}nav-link-activo{% endif %}">Reportes</a>
+      </nav>
+    </header>
+  {% endif %}
+
+  <main class="mx-auto max-w-5xl px-4 py-6">
+    {% if messages %}
+      <div class="mb-4 space-y-2">
+        {% for m in messages %}
+          <div class="rounded p-3 text-sm font-medium {% if m.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">{{ m }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block contenido %}{% endblock %}
+  </main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

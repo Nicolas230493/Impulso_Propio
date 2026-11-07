@@ -1,0 +1,6 @@
+{% comment %}Uso: {% include "parciales/campo.html" with campo=form.monto %}{% endcomment %}
+<div class="{{ clase|default:'' }}">
+  {% if campo.label and not sin_label %}<label class="label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>{% endif %}
+  {{ campo }}
+  {% for e in campo.errors %}<p class="error">{{ e }}</p>{% endfor %}
+</div>

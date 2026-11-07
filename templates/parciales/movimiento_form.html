@@ -1,0 +1,56 @@
+{% comment %}
+Formulario de movimiento (alta rápida en el dashboard, alta y edición).
+Alpine muestra tipo de cambio solo si hace falta y cuotas solo para gastos con tarjeta.
+{% endcomment %}
+{{ cuentas_json|json_script:"datos-cuentas" }}
+<form method="post" action="{{ accion }}" x-data="movimientoForm('datos-cuentas')" class="grid grid-cols-1 gap-3 md:grid-cols-2">
+  {% csrf_token %}
+  {% if siguiente %}<input type="hidden" name="next" value="{{ siguiente }}">{% endif %}
+  <div class="md:col-span-2">{% include "parciales/errores_form.html" %}</div>
+
+  <div class="flex items-center gap-4">
+    {% for radio in form.tipo %}
+      <label class="flex items-center gap-2">
+        <input type="radio" name="{{ radio.data.name }}" value="{{ radio.data.value }}" x-model="tipo" {% if radio.data.selected %}checked{% endif %}>
+        {{ radio.choice_label }}
+      </label>
+    {% endfor %}
+  </div>
+  {% include "parciales/campo.html" with campo=form.monto sin_label=1 %}
+
+  <div>
+    <select name="categoria" class="input" required>
+      {% for opcion in form.categoria %}{{ opcion }}{% endfor %}
+    </select>
+    {% for e in form.categoria.errors %}<p class="error">{{ e }}</p>{% endfor %}
+  </div>
+  <div>
+    <select name="cuenta" class="input" title="Cuenta / medio de pago" x-model="cuenta" @change="elegirCuenta()" required>
+      {% for opcion in form.cuenta %}{{ opcion }}{% endfor %}
+    </select>
+    {% for e in form.cuenta.errors %}<p class="error">{{ e }}</p>{% endfor %}
+  </div>
+
+  {% include "parciales/campo.html" with campo=form.fecha sin_label=1 %}
+  <div class="flex gap-2">
+    <select name="moneda" class="input w-24" x-model="moneda">
+      {% for opcion in form.moneda %}{{ opcion }}{% endfor %}
+    </select>
+    <div class="flex-1" x-show="necesitaTC" x-cloak>
+      {{ form.tipo_cambio }}
+      {% for e in form.tipo_cambio.errors %}<p class="error">{{ e }}</p>{% endfor %}
+    </div>
+  </div>
+
+  {% if form.cuotas %}
+    <label class="flex items-center gap-2 text-sm" x-show="admiteCuotas" x-cloak>
+      Cuotas <input type="number" name="cuotas" min="1" max="60" value="{{ form.cuotas.value|default:1 }}" class="input w-20">
+    </label>
+    <label class="flex items-center gap-2 text-sm">{{ form.repetir }} Repetir todos los meses</label>
+    {% for e in form.cuotas.errors %}<p class="error md:col-span-2">{{ e }}</p>{% endfor %}
+    {% for e in form.repetir.errors %}<p class="error md:col-span-2">{{ e }}</p>{% endfor %}
+  {% endif %}
+
+  {% include "parciales/campo.html" with campo=form.descripcion sin_label=1 clase="md:col-span-2" %}
+  <button class="btn-primario md:col-span-2">{{ boton|default:"Guardar movimiento" }}</button>
+</form>

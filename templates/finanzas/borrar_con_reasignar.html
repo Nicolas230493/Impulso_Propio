@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <section class="card mx-auto max-w-lg">
+    <h1 class="mb-3 text-xl font-bold">Eliminar “{{ objeto.nombre }}”</h1>
+    <form method="post" class="space-y-3">
+      {% csrf_token %}
+      {% include "parciales/errores_form.html" %}
+      {% if usos %}
+        <p class="text-sm">Tiene {{ usos }} movimiento{{ usos|pluralize }} o recurrente{{ usos|pluralize }} asociado{{ usos|pluralize }}. Elegí a dónde pasarlos antes de eliminarla.</p>
+        {% if form.fields.destino.queryset.exists %}
+          {% include "parciales/campo.html" with campo=form.destino %}
+        {% else %}
+          <p class="text-sm text-red-700">No hay otra opción compatible a la que pasarlos. Creá una primero.</p>
+        {% endif %}
+      {% else %}
+        <p class="text-sm">No tiene movimientos asociados.</p>
+      {% endif %}
+      <div class="flex gap-2">
+        <button class="btn-peligro" {% if usos and not form.fields.destino.queryset.exists %}disabled{% endif %}>Eliminar</button>
+        <a href="javascript:history.back()" class="btn-borde">Cancelar</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <div class="mx-auto mt-10 max-w-sm rounded bg-white p-8 shadow-md">
+    <h1 class="mb-1 text-center text-2xl font-bold">Gastos con Propósito</h1>
+    <h2 class="mb-4 text-center text-sm text-gray-600">{% block subtitulo %}{% endblock %}</h2>
+    {% block caja %}{% endblock %}
+  </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <section class="card mx-auto max-w-lg">
+    <h1 class="mb-3 text-xl font-bold">¿Borrar la meta “{{ object.titulo }}”?</h1>
+    <form method="post" class="flex gap-2">
+      {% csrf_token %}
+      <button class="btn-peligro">Borrar</button>
+      <a href="{% url 'metas:lista' %}" class="btn-borde">Cancelar</a>
+    </form>
+  </section>
+{% endblock %}

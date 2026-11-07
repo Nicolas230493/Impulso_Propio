@@ -1,0 +1,18 @@
+{% load formato %}
+<div id="recurrente-{{ r.pk|stringformat:'d' }}" class="flex flex-wrap items-center justify-between gap-2 border-b py-2 text-sm {% if not r.activo %}opacity-50{% endif %}">
+  <span>Día {{ r.dia_del_mes }} · {{ r.descripcion|default:r.categoria.nombre }} · {{ r.cuenta.nombre }}
+    {% if r.ultimo_generado %}<span class="text-xs text-gray-500">(último: {{ r.ultimo_generado|date:"d/m/Y" }})</span>{% endif %}
+  </span>
+  <span class="flex items-center gap-4">
+    <b class="{% if r.tipo == 'ingreso' %}text-green-600{% else %}text-red-600{% endif %}">{{ r.monto|dinero:r.moneda }}</b>
+    {% if r.activo %}
+      <form method="post" action="{% url 'finanzas:recurrente_detener' r.pk %}"
+            hx-post="{% url 'finanzas:recurrente_detener' r.pk %}" hx-target="#recurrente-{{ r.pk|stringformat:'d' }}" hx-swap="outerHTML"
+            hx-confirm="¿Dejar de repetir? Los movimientos ya generados se conservan.">
+        {% csrf_token %}<button class="link-peligro">Dejar de repetir</button>
+      </form>
+    {% else %}
+      <span class="text-xs text-gray-500">Detenido</span>
+    {% endif %}
+  </span>
+</div>

@@ -1,0 +1,11 @@
+{% extends "registration/_caja.html" %}
+{% block subtitulo %}Crear cuenta{% endblock %}
+{% block caja %}
+  <form method="post" class="space-y-3">
+    {% csrf_token %}
+    {% include "parciales/errores_form.html" %}
+    {% for campo in form %}{% include "parciales/campo.html" %}{% endfor %}
+    <button class="btn-verde w-full">Registrarme</button>
+  </form>
+  <p class="mt-4 text-center text-sm"><a href="{% url 'login' %}" class="link">Ya tengo cuenta</a></p>
+{% endblock %}

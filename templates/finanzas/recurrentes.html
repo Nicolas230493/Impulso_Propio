@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <h1 class="mb-1 text-2xl font-bold">Movimientos recurrentes</h1>
+  <p class="mb-4 text-sm text-gray-500">Se generan solos cada mes. Para crear uno, marcá “Repetir todos los meses” al cargar un movimiento.</p>
+  <div class="card">
+    {% for r in recurrentes %}
+      {% include "parciales/recurrente_fila.html" %}
+    {% empty %}
+      <p class="text-sm text-gray-500">No hay movimientos recurrentes.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

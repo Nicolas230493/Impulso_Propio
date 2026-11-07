@@ -1,0 +1,1 @@
+{% load formato %}{% if v is None %}{% if actual %}<span class="text-gray-500">nuevo</span>{% else %}—{% endif %}{% else %}<span class="{% if v > 0 %}text-red-600{% else %}text-green-600{% endif %}">{{ v|porcentaje }}</span>{% endif %}

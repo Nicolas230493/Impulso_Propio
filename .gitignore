@@ -1,2 +1,20 @@
-node_modules/\n.env
-config.js
+# Entorno y secretos
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Django
+db.sqlite3
+staticfiles/
+media/
+
+# Binario de Tailwind (se descarga con scripts/tailwind.sh)
+bin/

@@ -1,0 +1,16 @@
+{% extends "registration/_caja.html" %}
+{% block subtitulo %}Iniciar sesión{% endblock %}
+{% block caja %}
+  <form method="post" class="space-y-3">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<p class="text-center text-sm font-semibold text-red-600">Email o contraseña incorrectos.</p>{% endif %}
+    <input type="email" name="username" value="{{ form.username.value|default:'' }}" placeholder="Email" class="input" required autofocus>
+    <input type="password" name="password" placeholder="Contraseña" class="input" required>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn-primario w-full">Iniciar sesión</button>
+  </form>
+  <div class="mt-4 flex justify-between text-sm">
+    <a href="{% url 'registro' %}" class="link">Crear cuenta</a>
+    <a href="{% url 'password_reset' %}" class="link">Olvidé mi contraseña</a>
+  </div>
+{% endblock %}

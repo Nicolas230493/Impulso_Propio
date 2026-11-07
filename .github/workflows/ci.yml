@@ -1,0 +1,32 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: gastos
+          POSTGRES_USER: gastos
+          POSTGRES_PASSWORD: gastos
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check . && ruff format --check .
+      - name: Migraciones completas
+        run: python manage.py makemigrations --check --dry-run
+      - name: Tests (SQLite) con cobertura
+        run: pytest --cov=core --cov=usuarios --cov=finanzas --cov=metas --cov=reportes --cov=scripts --cov-fail-under=90
+      - name: Tests contra PostgreSQL
+        env:
+          TEST_DATABASE_URL: postgres://gastos:gastos@localhost:5432/gastos
+        run: pytest

@@ -1,0 +1,22 @@
+[project]
+name = "gastos"
+version = "2.0.0"
+description = "Gastos con Propósito: finanzas personales en Django"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "DJ"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py"]
+addopts = "-q"
+filterwarnings = ["ignore:No directory at:UserWarning"]
+
+[tool.coverage.run]
+omit = ["*/migrations/*", "tests/*", "config/*"]

@@ -1,0 +1,30 @@
+# Desarrollo igual a producción: `docker compose up --build` y entrar a http://localhost:8000
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: gastos
+      POSTGRES_USER: gastos
+      POSTGRES_PASSWORD: gastos
+    volumes:
+      - datos:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "gastos"]
+      interval: 5s
+      retries: 10
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://gastos:gastos@db:5432/gastos
+      SECRET_KEY: clave-local-de-docker-no-usar-en-produccion-1234567890
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      SECURE_SSL_REDIRECT: "False"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  datos:

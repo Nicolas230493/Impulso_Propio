@@ -1,0 +1,7 @@
+{% load static %}
+{{ graficos|json_script:"datos-grafico" }}
+<script src="{% static 'vendor/chart-4.4.7.umd.min.js' %}" defer></script>
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+  <div class="card">{% if graficos.categorias.valores %}<canvas id="chart-donas"></canvas>{% else %}<p class="text-sm text-gray-500">Sin gastos este mes.</p>{% endif %}</div>
+  <div class="card"><canvas id="chart-barras"></canvas></div>
+</div>

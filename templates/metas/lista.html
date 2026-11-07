@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+    <h1 class="text-2xl font-bold">Metas de ahorro y el porqué</h1>
+    <a href="{% url 'metas:nueva' %}" class="btn-violeta">Nueva meta</a>
+  </div>
+  <div class="space-y-4">
+    {% for meta in metas %}
+      {% include "parciales/meta_tarjeta.html" %}
+    {% empty %}
+      <p class="card text-sm text-gray-500">Todavía no tenés metas. Creá una y anotá por qué la querés lograr.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

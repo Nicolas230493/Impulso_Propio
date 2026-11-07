@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block contenido %}
+  <section class="card mx-auto max-w-lg">
+    <h1 class="mb-3 text-xl font-bold">{{ titulo }}</h1>
+    <form method="post" class="space-y-3">
+      {% csrf_token %}
+      {% include "parciales/errores_form.html" %}
+      {% for campo in form %}{% include "parciales/campo.html" %}{% endfor %}
+      <div class="flex gap-2">
+        <button class="btn-primario">Guardar</button>
+        <a href="{{ volver }}" class="btn-borde">Cancelar</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

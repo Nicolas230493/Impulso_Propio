@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load formato %}
+{% block contenido %}
+  <h1 class="mb-1 text-2xl font-bold">Categorías y topes mensuales</h1>
+  <p class="mb-4 text-sm text-gray-500">Consumo de {{ mes }}. El aviso aparece al 80 % del tope y se pone en rojo al superarlo.</p>
+  <div class="card mb-6 overflow-x-auto">
+    <table class="tabla">
+      <thead><tr><th>Categoría</th><th class="text-right">Tope</th><th class="text-right">Gastado</th><th class="w-1/4">Consumo</th><th></th></tr></thead>
+      <tbody>
+        {% for c in categorias %}
+          <tr>
+            <td>{{ c.categoria.nombre }}</td>
+            <td class="text-right">{{ c.categoria.tope_mensual|ars|default:"—" }}</td>
+            <td class="text-right">{{ c.gastado|ars }}</td>
+            <td>
+              {% if c.porcentaje is not None %}
+                <div class="h-2 w-full rounded-full bg-gray-200">
+                  <div class="h-2 rounded-full {% if c.nivel == 'roja' %}bg-red-500{% elif c.nivel == 'amarilla' %}bg-yellow-400{% else %}bg-green-500{% endif %}"
+                       style="width: {% if c.porcentaje > 100 %}100{% else %}{{ c.porcentaje|floatformat:'0u' }}{% endif %}%"></div>
+                </div>
+                <span class="text-xs text-gray-500">{{ c.porcentaje|numero:0 }} %</span>
+              {% else %}<span class="text-xs text-gray-400">Sin tope</span>{% endif %}
+            </td>
+            <td class="whitespace-nowrap text-right">
+              <a href="{% url 'finanzas:categoria_editar' c.categoria.pk %}" class="link mr-2">Editar</a>
+              <a href="{% url 'finanzas:categoria_borrar' c.categoria.pk %}" class="link-peligro">Eliminar</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <section class="card">
+    <h2 class="mb-3 text-lg font-bold">Agregar categoría</h2>
+    <form method="post" action="{% url 'finanzas:categoria_nueva' %}" class="grid grid-cols-1 gap-2 md:grid-cols-3">
+      {% csrf_token %}
+      {% include "parciales/campo.html" with campo=form.nombre %}
+      {% include "parciales/campo.html" with campo=form.tope_mensual %}
+      <button class="btn-verde self-end">Agregar categoría</button>
+    </form>
+  </section>
+{% endblock %}
